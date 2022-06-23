@@ -2,18 +2,30 @@ import { useState } from 'react';
 import { connect } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { handleAddAnswer } from '../../actions/shared';
+import NotFound from '../Nav/404';
 
 const PollDetails = (props) => {
   const { dispatch, authedUser, users, questions } = props;
+  const { question_id } = useParams();
   const [setOptionOne] = useState('');
   const [setOptionTwo] = useState('');
-//const answers = users[authedUser].answers;
-  const { question_id } = useParams();
+  const navigate = useNavigate();
+
+  let allQuestions = [];
+  for (let i=0; i < Object.keys(questions).length; i++) {
+    let id = Object.keys(questions)[i];
+    allQuestions.push(id);
+  }
+  const exists = allQuestions.includes(question_id)?true:false;
+
+  if (exists) {
+
   const dQuestion = questions[question_id];
   let answered = (dQuestion.optionOne.votes.includes(authedUser) || dQuestion.optionTwo.votes.includes(authedUser))? true : false ;
   const vOptionOne = dQuestion.optionOne.votes.length;
   const vOptionTwo = dQuestion.optionTwo.votes.length;
-  const navigate = useNavigate();
+
+
 
   function timeConverter(UNIX_timestamp){
     var a = new Date(UNIX_timestamp);
@@ -32,6 +44,8 @@ const PollDetails = (props) => {
     dispatch(handleAddAnswer({ authedUser, qid, answer }));
     navigate(`/questions/${question_id}`);
   }
+
+
 
   return (
     <div>
@@ -87,7 +101,19 @@ const PollDetails = (props) => {
       }
 
     </div>
-  )}
+  )} else {
+    return (
+      <div>
+        <header className="bg-white shadow">
+          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl font-bold text-gray-900">Poll Details</h1>
+          </div>
+        </header>
+
+        <NotFound />
+      </div>
+    )}
+}
 
 const mapStateToProps = state => {
   return {

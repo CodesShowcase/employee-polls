@@ -7,6 +7,7 @@ import Login from '../components/Auth/Auth';
 import NotFound from '../components/Nav/404';
 
 export default function Router() {
+
     return (
     <Routes>
         <Route exact path="/" element={<Dashboard />} />
